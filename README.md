@@ -65,9 +65,9 @@ Compila y ejecuta desde línea de comandos:
 ```xml
 <!-- Jasypt -->
 <dependency>
-    <groupId>com.github.ulisesbocchio</groupId>
-    <artifactId>jasypt-spring-boot-starter</artifactId>
-    <version>3.0.5</version>
+    <groupId>org.jasypt</groupId>
+    <artifactId>jasypt</artifactId>
+    <version>1.9.3</version>
 </dependency>
 
 <!-- BouncyCastle -->
@@ -117,7 +117,7 @@ Compila y ejecuta desde línea de comandos:
 8 -> PBEWITHSHA1AND128BITAES-CBC-BC
 9 -> PBEWITHSHA1AND192BITAES-CBC-BC
 10 -> PBEWITHSHA1AND256BITAES-CBC-BC
-✅ Seleccionaste: PBEWithHMACSHA512AndAES_256
+✅ Seleccionaste: PBEWITHSHA256AND256BITAES-CBC-BC
 
 🔐 Elige cifrar o descifrar:
 1 -> 🔐 Cifrar
