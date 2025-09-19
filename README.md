@@ -85,13 +85,6 @@ Compila y ejecuta desde línea de comandos:
     <scope>provided</scope>
 </dependency>
 
-<!-- Logging -->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-api</artifactId>
-    <version>2.0.13</version>
-</dependency>
-
 <!-- Logback Classic -->
 <dependency>
     <groupId>ch.qos.logback</groupId>
