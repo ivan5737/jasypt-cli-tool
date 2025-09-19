@@ -12,6 +12,16 @@ import lombok.NoArgsConstructor;
 public class OperationConstants {
 
   /**
+   * Constante que representa la operación de cifrado.
+   */
+  public static final String ENCRYPT = "Cifrar";
+
+  /**
+   * Constante que representa la operación de descifrado.
+   */
+  public static final String DECRYPT = "Descifrar";
+
+  /**
    * Mapa inmutable que contiene las opciones de operaciones disponibles.
    * La clave es un entero que representa la opción, y el valor es la descripción de la operación.
    */
@@ -19,8 +29,8 @@ public class OperationConstants {
 
   static {
     Map<Integer, String> map = new LinkedHashMap<>();
-    map.put(1, "🔐 Cifrar");
-    map.put(2, "🔓 Descifrar");
+    map.put(1, ENCRYPT);
+    map.put(2, DECRYPT);
     OPERATION_OPTIONS = Collections.unmodifiableMap(map);
   }
 }

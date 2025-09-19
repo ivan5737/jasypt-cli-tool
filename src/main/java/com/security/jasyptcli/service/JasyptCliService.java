@@ -1,14 +1,13 @@
 package com.security.jasyptcli.service;
 
-import com.security.jasyptcli.constants.Constants;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Scanner;
-import javax.crypto.Cipher;
+import com.security.jasyptcli.constants.AlgorithmConstants;
+import com.security.jasyptcli.constants.OperationConstants;
+import com.security.jasyptcli.exception.JasyptCliException;
+import com.security.jasyptcli.exception.constants.ErrorCode;
+import com.security.jasyptcli.util.JasyptUtils;
+import java.security.Security;
 import lombok.extern.slf4j.Slf4j;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Servicio para operaciones de cifrado y descifrado usando JASYPT.
@@ -16,111 +15,39 @@ import org.slf4j.LoggerFactory;
 @Slf4j
 public class JasyptCliService {
 
-  /**
-   * Logger específico para interacciones con el usuario en la consola.
-   */
-  private static final Logger SCAN_LOG = LoggerFactory.getLogger(Constants.PRINTLN_LOGGER_NAME);
-
-  /**
-   * Solicita al usuario que seleccione una opción de un mapa dado.
-   *
-   * @param scanner       Scanner para leer la entrada del usuario.
-   * @param options       Mapa de opciones disponibles (clave: número, valor: descripción).
-   * @param promptMessage Mensaje para solicitar la entrada al usuario.
-   * @return Opción seleccionada por el usuario.
-   */
-  public int promptSelectionFromMap(Scanner scanner, Map<Integer, String> options,
-                                    String promptMessage) {
-    int min = Collections.min(options.keySet());
-    int max = Collections.max(options.keySet());
-    String errorMessage = String.format("❌ Valor inválido. Solo se permite %d️⃣ a %d️⃣.", min, max);
-    return readValidOption(scanner, min, max, promptMessage, errorMessage);
+  public JasyptCliService() {
+    Security.addProvider(new BouncyCastleProvider());
   }
 
   /**
-   * Lee una opción válida del usuario dentro de un rango específico.
+   * Procesa la operación de cifrado o descifrado según los parámetros dados.
    *
-   * @param scanner  Scanner para leer la entrada del usuario.
-   * @param min      Valor mínimo permitido (inclusive).
-   * @param max      Valor máximo permitido (inclusive).
-   * @param prompt   Mensaje para solicitar la entrada al usuario.
-   * @param errorMsg Mensaje de error en caso de entrada inválida.
-   * @return Opción válida ingresada por el usuario.
-   */
-  private int readValidOption(Scanner scanner, int min, int max, String prompt, String errorMsg) {
-    int choice;
-    while (true) {
-      SCAN_LOG.info(prompt);
-      if (scanner.hasNextInt()) {
-        choice = scanner.nextInt();
-        scanner.nextLine();
-        if (choice >= min && choice <= max) {
-          break;
-        }
-      } else {
-        scanner.nextLine();
-      }
-      SCAN_LOG.warn(errorMsg);
-    }
-    return choice;
-  }
-
-  /**
-   * Cifra una cadena de texto usando JASYPT.
-   *
-   * @param input     Texto a cifrar.
-   * @param password  Clave maestra para el cifrado.
+   * @param operation Operación a realizar ("encrypt" o "decrypt").
    * @param algorithm Algoritmo de cifrado a usar.
-   * @return Texto cifrado en base64.
-   */
-  public String encrypt(String input, String password, String algorithm) {
-    StandardPBEStringEncryptor encryptor = createEncryptor(password, algorithm);
-    return encryptor.encrypt(input);
-  }
-
-  /**
-   * Descifra una cadena de texto cifrada usando JASYPT.
-   *
-   * @param input     Texto cifrado en base64.
-   * @param password  Clave maestra para el descifrado.
-   * @param algorithm Algoritmo de cifrado usado originalmente.
-   * @return Texto descifrado.
-   */
-  public String decrypt(String input, String password, String algorithm) {
-    StandardPBEStringEncryptor encryptor = createEncryptor(password, algorithm);
-    return encryptor.decrypt(input);
-  }
-
-  /**
-   * Crea y configura un encriptado JASYPT con los parámetros dados.
-   *
    * @param password  Clave maestra para el cifrado/descifrado.
-   * @param algorithm Algoritmo de cifrado a usar.
-   * @return Encriptado configurado.
+   * @param input     Texto a cifrar o descifrar.
+   * @return Resultado de la operación (texto cifrado o descifrado).
+   * @throws JasyptCliException Sí hay errores en los parámetros o durante la operación.
    */
-  private StandardPBEStringEncryptor createEncryptor(String password, String algorithm) {
-    StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-    encryptor.setPassword(password);
-    encryptor.setAlgorithm(algorithm);
-    encryptor.setKeyObtentionIterations(1000);
-    if (isAlgorithmAvailable(algorithm)) {
-      encryptor.setProviderName("BC");
+  public String process(String operation, String algorithm, String password, String input) {
+    if (operation == null || operation.isBlank()) {
+      throw new JasyptCliException(ErrorCode.INVALID_OPERATION, "Operación vacía o nula");
     }
-    return encryptor;
+    if (!AlgorithmConstants.ALGORITHM_OPTIONS.containsValue(algorithm)) {
+      throw new JasyptCliException(ErrorCode.INVALID_ALGORITHM, algorithm);
+    }
+    if (password == null || password.isBlank()) {
+      throw new JasyptCliException(ErrorCode.MISSING_PASSWORD);
+    }
+    if (input == null || input.isBlank()) {
+      throw new JasyptCliException(ErrorCode.MISSING_TEXT);
+    }
+
+    return switch (operation) {
+      case OperationConstants.ENCRYPT -> JasyptUtils.encrypt(algorithm, password, input);
+      case OperationConstants.DECRYPT -> JasyptUtils.decrypt(algorithm, password, input);
+      default -> throw new JasyptCliException(ErrorCode.INVALID_OPERATION, operation);
+    };
   }
 
-  /**
-   * Verifica si un algoritmo de cifrado está disponible en el entorno actual.
-   *
-   * @param algorithm Nombre del algoritmo a verificar.
-   * @return true si el algoritmo está disponible, false en caso contrario.
-   */
-  private boolean isAlgorithmAvailable(String algorithm) {
-    try {
-      Cipher.getInstance(algorithm, "BC");
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
-  }
 }

@@ -23,4 +23,9 @@ public class Constants {
    */
   public static final String PRINTLN_LOGGER_NAME = "println";
 
+  /**
+   * Constante que representa el valor cero.
+   */
+  public static final int ZERO = 0;
+
 }
