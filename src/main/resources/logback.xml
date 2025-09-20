@@ -19,7 +19,7 @@
     </appender>
 
     <!-- Logger (PRINTLN en consola) -->
-    <logger name="println" level="INFO" additivity="false">
+    <logger name="PromptLogger" level="INFO" additivity="false">
         <appender-ref ref="PRINTLN"/>
     </logger>
 

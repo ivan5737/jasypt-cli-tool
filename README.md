@@ -1,7 +1,7 @@
 
 # 🔐 Jasypt CLI Tool 0.0.1
 
-Herramienta de línea de comandos para **cifrar y descifrar textos** utilizando **Jasypt** con soporte para múltiples algoritmos, emojis y validaciones, todo en un solo `.jar`.
+Herramienta de línea de comandos para **cifrar y descifrar textos** utilizando **Jasypt** con soporte para múltiples algoritmos y validaciones, todo en un solo `.jar`.
 
 ---
 
@@ -52,7 +52,7 @@ Compila y ejecuta desde línea de comandos:
 
 - Java 17+ ☕
 - Maven 3.8+
-- Terminal que soporte UTF-8 y emojis (💻 consola Windows o bash moderna)
+- Terminal que soporte UTF-8 (💻 consola Windows o bash moderna)
 
 ---
 
@@ -109,6 +109,38 @@ Compila y ejecuta desde línea de comandos:
 </dependency>
 ```
 
+## 📄 Plugins
+
+```xml
+<!-- Shade Plugin -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <version>3.5.0</version>
+</plugin>
+
+<!-- Surefire Plugin -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.2.5</version>
+</plugin>
+        
+<!-- Jacoco Plugin -->
+<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.12</version>
+</plugin>
+```
+
+---
+
+## 📋 Logs
+
+- PromptLogger: usado en ConsolePrompt para interacción con el usuario (emula println).
+- log (@Slf4j): usado en Service y Tool para errores y depuración.
+
 ---
 
 ## 🧪 Ejemplo de uso
@@ -138,6 +170,21 @@ miTextoSecreto123
 
 ✅ Resultado: ENC(nz9s...==)
 ```
+
+---
+
+## ❌ Códigos de Error
+
+El CLI devuelve códigos de salida (`exit code`) en caso de error:
+
+- 1001 → Operación inválida
+- 1002 → Algoritmo no soportado
+- 1003 → Contraseña vacía
+- 1004 → Texto vacío
+- 9999 → Error inesperado
+
+Esto permite integrarlo fácilmente en scripts y pipelines CI/CD.
+
 
 ---
 

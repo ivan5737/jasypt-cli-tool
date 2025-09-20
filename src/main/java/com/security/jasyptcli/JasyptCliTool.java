@@ -45,12 +45,16 @@ public class JasyptCliTool {
       System.exit(Constants.ZERO);
 
     } catch (JasyptCliException e) {
-      SCAN_LOG.error("❌ [{}] {}", e.getErrorCode().getId(), e.getMessage());
+      log.error("❌ [{}] {}",
+              e.getErrorCode().getId(),
+              e.getMessage());
       System.exit(e.getErrorCode().getId());
 
     } catch (Exception e) {
-      SCAN_LOG.error("❌ [{}] {} Detalle {}", ErrorCode.UNEXPECTED_ERROR.getId(),
-              ErrorCode.UNEXPECTED_ERROR.getDescription(), e.getMessage());
+      log.error("❌ [{}] {} Detalle {}",
+              ErrorCode.UNEXPECTED_ERROR.getId(),
+              ErrorCode.UNEXPECTED_ERROR.getDescription(),
+              e.getMessage());
       System.exit(ErrorCode.UNEXPECTED_ERROR.getId());
     }
   }
