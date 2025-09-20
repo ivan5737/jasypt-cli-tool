@@ -1,5 +1,6 @@
 package com.security.jasyptcli.util;
 
+import com.security.jasyptcli.model.JasyptRequest;
 import javax.crypto.Cipher;
 import lombok.NoArgsConstructor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
@@ -8,29 +9,27 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 public class JasyptUtils {
 
   /**
-   * Cifra una cadena de texto usando JASYPT.
+   * Cifra una cadena de texto plano usando JASYPT.
    *
-   * @param algorithm Algoritmo de cifrado a usar.
-   * @param password  Clave maestra para el cifrado.
-   * @param input     Texto plano a cifrar.
+   * @param jasyptRequest La solicitud que contiene los detalles de la operación.
    * @return Texto cifrado en base64.
    */
-  public static String encrypt(String algorithm, String password, String input) {
-    StandardPBEStringEncryptor encryptor = createEncryptor(password, algorithm);
-    return encryptor.encrypt(input);
+  public static String encrypt(JasyptRequest jasyptRequest) {
+    StandardPBEStringEncryptor encryptor =
+            createEncryptor(jasyptRequest.password(), jasyptRequest.algorithm());
+    return encryptor.encrypt(jasyptRequest.input());
   }
 
   /**
    * Descifra una cadena de texto cifrado usando JASYPT.
    *
-   * @param algorithm Algoritmo de cifrado a usar.
-   * @param password  Clave maestra para el descifrado.
-   * @param input     Texto cifrado en base64 a descifrar.
+   * @param jasyptRequest La solicitud que contiene los detalles de la operación.
    * @return Texto plano descifrado.
    */
-  public static String decrypt(String algorithm, String password, String input) {
-    StandardPBEStringEncryptor encryptor = createEncryptor(password, algorithm);
-    return encryptor.decrypt(input);
+  public static String decrypt(JasyptRequest jasyptRequest) {
+    StandardPBEStringEncryptor encryptor =
+            createEncryptor(jasyptRequest.password(), jasyptRequest.algorithm());
+    return encryptor.decrypt(jasyptRequest.input());
   }
 
   /**

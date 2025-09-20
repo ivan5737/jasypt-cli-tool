@@ -1,6 +1,9 @@
 package com.security.jasyptcli.console;
 
+import com.security.jasyptcli.constants.AlgorithmConstants;
 import com.security.jasyptcli.constants.Constants;
+import com.security.jasyptcli.constants.OperationConstants;
+import com.security.jasyptcli.model.JasyptRequest;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Scanner;
@@ -19,6 +22,37 @@ public class ConsolePrompt {
    */
   private final Scanner scanner = new Scanner(System.in);
 
+  public JasyptRequest getJasyptRequest() {
+    SCAN_LOG.info("🔐 Ingresa la clave maestra (JASYPT password): ");
+    String password = scanner.nextLine();
+
+
+    SCAN_LOG.info("📦 Algoritmos disponibles:");
+    AlgorithmConstants.ALGORITHM_OPTIONS.forEach((key, value) ->
+            SCAN_LOG.info("{} -> {}", key, value));
+    int choiceAlgorithm = getOperationPromptFrommMap(
+            AlgorithmConstants.ALGORITHM_OPTIONS,
+            Constants.PROMPT_MSG_ALGORITHM);
+    String algorithm = AlgorithmConstants.ALGORITHM_OPTIONS.get(choiceAlgorithm);
+    SCAN_LOG.info("✅ Seleccionaste: {}", algorithm);
+
+
+    SCAN_LOG.info("🔄 ¿Qué deseas realizar?");
+    OperationConstants.OPERATION_OPTIONS.forEach((key, value) ->
+            SCAN_LOG.info("{} -> {}", key, value));
+    int choiceOperation = getOperationPromptFrommMap(
+            OperationConstants.OPERATION_OPTIONS,
+            Constants.PROMPT_MSG_OPERATION);
+    String operation = OperationConstants.OPERATION_OPTIONS.get(choiceOperation);
+    SCAN_LOG.info("✅ Seleccionaste: {}", operation);
+
+
+    SCAN_LOG.info("🔑 Ingresa el texto:");
+    String input = scanner.nextLine();
+
+    return new JasyptRequest(operation, algorithm, password, input);
+  }
+
   /**
    * Solicita al usuario que seleccione una opción de un mapa dado.
    *
@@ -26,7 +60,7 @@ public class ConsolePrompt {
    * @param promptMessage Mensaje para solicitar la entrada al usuario.
    * @return Opción seleccionada por el usuario.
    */
-  public int promptSelectionFromMap(Map<Integer, String> options, String promptMessage) {
+  private int getOperationPromptFrommMap(Map<Integer, String> options, String promptMessage) {
     int min = Collections.min(options.keySet());
     int max = Collections.max(options.keySet());
     String errorMessage = String.format("❌ Valor inválido. Solo se permite %d️ a %d️", min, max);

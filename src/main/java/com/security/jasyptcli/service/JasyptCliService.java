@@ -4,6 +4,7 @@ import com.security.jasyptcli.constants.AlgorithmConstants;
 import com.security.jasyptcli.constants.OperationConstants;
 import com.security.jasyptcli.exception.JasyptCliException;
 import com.security.jasyptcli.exception.constants.ErrorCode;
+import com.security.jasyptcli.model.JasyptRequest;
 import com.security.jasyptcli.util.JasyptUtils;
 import java.security.Security;
 import lombok.extern.slf4j.Slf4j;
@@ -20,34 +21,36 @@ public class JasyptCliService {
   }
 
   /**
-   * Procesa la operación de cifrado o descifrado según los parámetros dados.
+   * Procesa la solicitud de cifrado o descifrado.
    *
-   * @param operation Operación a realizar ("encrypt" o "decrypt").
-   * @param algorithm Algoritmo de cifrado a usar.
-   * @param password  Clave maestra para el cifrado/descifrado.
-   * @param input     Texto a cifrar o descifrar.
-   * @return Resultado de la operación (texto cifrado o descifrado).
-   * @throws JasyptCliException Sí hay errores en los parámetros o durante la operación.
+   * @param jasyptRequest La solicitud que contiene los detalles de la operación.
+   * @return El texto cifrado o descifrado.
+   * @throws JasyptCliException Si hay un error en la solicitud o durante el proceso.
    */
-  public String process(String operation, String algorithm, String password, String input) {
-    if (operation == null || operation.isBlank()) {
+  public String process(JasyptRequest jasyptRequest) {
+    validateRequest(jasyptRequest);
+
+    return switch (jasyptRequest.operation()) {
+      case OperationConstants.ENCRYPT -> JasyptUtils.encrypt(jasyptRequest);
+      case OperationConstants.DECRYPT -> JasyptUtils.decrypt(jasyptRequest);
+      default ->
+              throw new JasyptCliException(ErrorCode.INVALID_OPERATION, jasyptRequest.operation());
+    };
+  }
+
+  private void validateRequest(JasyptRequest jasyptRequest) {
+    if (jasyptRequest.operation() == null || jasyptRequest.operation().isBlank()) {
       throw new JasyptCliException(ErrorCode.INVALID_OPERATION, "Operación vacía o nula");
     }
-    if (!AlgorithmConstants.ALGORITHM_OPTIONS.containsValue(algorithm)) {
-      throw new JasyptCliException(ErrorCode.INVALID_ALGORITHM, algorithm);
+    if (!AlgorithmConstants.ALGORITHM_OPTIONS.containsValue(jasyptRequest.algorithm())) {
+      throw new JasyptCliException(ErrorCode.INVALID_ALGORITHM, jasyptRequest.algorithm());
     }
-    if (password == null || password.isBlank()) {
+    if (jasyptRequest.password() == null || jasyptRequest.password().isBlank()) {
       throw new JasyptCliException(ErrorCode.MISSING_PASSWORD);
     }
-    if (input == null || input.isBlank()) {
+    if (jasyptRequest.input() == null || jasyptRequest.input().isBlank()) {
       throw new JasyptCliException(ErrorCode.MISSING_TEXT);
     }
-
-    return switch (operation) {
-      case OperationConstants.ENCRYPT -> JasyptUtils.encrypt(algorithm, password, input);
-      case OperationConstants.DECRYPT -> JasyptUtils.decrypt(algorithm, password, input);
-      default -> throw new JasyptCliException(ErrorCode.INVALID_OPERATION, operation);
-    };
   }
 
 }
