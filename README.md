@@ -8,14 +8,30 @@ Herramienta de línea de comandos para **cifrar y descifrar textos** utilizando 
 ## 📦 Estructura del Proyecto
 
 ```
-com.security.jasyptcli
-├── JasyptCliTool.java              # Clase principal con el método main()
-├── service
-│   └── JasyptCliService.java       # Lógica de cifrado y descifrado
+├── JasyptCliTool.java          # Clase principal con el método main(); orquesta ejecución, maneja errores y salida
+│
+├── console
+│ └── ConsolePrompt.java        # Manejo de interacción con el usuario vía consola (inputs, menús, selección de algoritmos)
+│
 ├── constants
-│   ├── AlgorithmConstants.java     # Algoritmos disponibles con emojis
-│   ├── Constants.java              # Constantes generales
-│   └── OperationConstants.java     # Operaciones: cifrar / descifrar
+│ ├── AlgorithmConstants.java   # Lista de algoritmos soportados (con emojis descriptivos)
+│ ├── Constants.java            # Constantes generales de la aplicación
+│ └── OperationConstants.java   # Operaciones soportadas: encrypt / decrypt
+│
+├── exception
+│ ├── JasyptCliException.java   # Excepción base personalizada para el CLI
+│ │
+│ └── constants
+│ └── ErrorCode.java            # Enum con códigos y descripciones de error (para mensajes y exit codes)
+│
+├── model
+│ └── JasyptRequest.java        # DTO para agrupar parámetros de entrada (operación, algoritmo, contraseña, input)
+│
+├── service
+│ └── JasyptCliService.java     # Lógica de negocio: validaciones y ejecución de cifrado/descifrado
+│
+└── util
+└── JasyptUtils.java            # Métodos utilitarios para configurar y ejecutar Jasypt (encrypt/decrypt)
 ```
 
 ---
@@ -43,7 +59,7 @@ Compila y ejecuta desde línea de comandos:
 ## 🔐 Características
 
 - Elección de algoritmo Jasypt ✏️
-- Interfaz por consola amigable con emojis y validaciones ❌✅
+- Interfaz por consola amigable con validaciones ❌✅
 - Cifrado y descifrado de texto plano 📥📤
 - Soporte para algoritmos como:
     - `PBEWithMD5AndDES`
