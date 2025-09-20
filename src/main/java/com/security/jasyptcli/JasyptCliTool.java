@@ -41,7 +41,7 @@ public class JasyptCliTool {
       JasyptRequest jasyptRequest = CONSOLE_PROMPT.getJasyptRequest();
       String result = JASYPT_SERVICE.process(jasyptRequest);
 
-      SCAN_LOG.info("✅ Resultado: {}", result);
+      SCAN_LOG.info(Constants.RESULT, result);
       System.exit(Constants.ZERO);
 
     } catch (JasyptCliException e) {
@@ -51,7 +51,7 @@ public class JasyptCliTool {
       System.exit(e.getErrorCode().getId());
 
     } catch (Exception e) {
-      log.error("❌ [{}] {} Detalle {}",
+      log.error("❌ [{}] {} Detalle: {}",
               ErrorCode.UNEXPECTED_ERROR.getId(),
               ErrorCode.UNEXPECTED_ERROR.getDescription(),
               e.getMessage());

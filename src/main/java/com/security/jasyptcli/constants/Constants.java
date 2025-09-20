@@ -41,6 +41,8 @@ public class Constants {
 
   public static final String SELECTED = "✅ Seleccionaste: {}";
 
+  public static final String RESULT = "✅ Resultado: {}";
+
   // Mensajes de validación
   public static final String INVALID_OPTION = "❌ Valor inválido. Solo se permite %d a %d";
 

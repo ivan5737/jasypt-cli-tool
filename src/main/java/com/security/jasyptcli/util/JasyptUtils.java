@@ -3,6 +3,7 @@ package com.security.jasyptcli.util;
 import com.security.jasyptcli.model.JasyptRequest;
 import javax.crypto.Cipher;
 import lombok.NoArgsConstructor;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
@@ -45,7 +46,7 @@ public class JasyptUtils {
     encryptor.setAlgorithm(algorithm);
     encryptor.setKeyObtentionIterations(1000);
     if (isAlgorithmAvailable(algorithm)) {
-      encryptor.setProviderName("BC");
+      encryptor.setProviderName(BouncyCastleProvider.PROVIDER_NAME);
     }
     return encryptor;
   }
@@ -58,7 +59,7 @@ public class JasyptUtils {
    */
   private static boolean isAlgorithmAvailable(String algorithm) {
     try {
-      Cipher.getInstance(algorithm, "BC");
+      Cipher.getInstance(algorithm, BouncyCastleProvider.PROVIDER_NAME);
       return true;
     } catch (Exception e) {
       return false;
